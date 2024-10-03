@@ -5,7 +5,8 @@ from slack_bolt.adapter.flask import SlackRequestHandler
 from slack_bolt import App
 from dotenv import find_dotenv, load_dotenv
 from flask import Flask, request
-from functions import draft_email
+
+from functions import chat_completion
 
 # Load environment variables from .env file
 load_dotenv(find_dotenv())
@@ -34,6 +35,7 @@ def get_bot_user_id():
         # Initialize the Slack client with your bot token
         slack_client = WebClient(token=os.environ["SLACK_BOT_TOKEN"])
         response = slack_client.auth_test()
+        print(response["user_id"])
         return response["user_id"]
     except SlackApiError as e:
         print(f"Error: {e}")
@@ -70,9 +72,14 @@ def handle_mentions(body, say):
     text = text.replace(mention, "").strip()
 
     say("Sure, I'll get right on that!")
-    # response = my_function(text)
-    response = draft_email(text)
+    response = chat_completion(text)
+    # response = "Nice to meet you"
     say(response)
+
+
+@app.event("message")
+def handle_message_events(body, logger):
+    logger.info(body)
 
 
 @flask_app.route("/slack/events", methods=["POST"])
@@ -89,4 +96,5 @@ def slack_events():
 
 # Run the Flask app
 if __name__ == "__main__":
+    # get_bot_user_id()
     flask_app.run()
