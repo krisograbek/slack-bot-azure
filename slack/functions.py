@@ -12,10 +12,10 @@ def chat_completion(user_input):
     completion = openai_client.chat.completions.create(
         model="gpt-4o-mini",
         messages=[
-            # {
-            #     "role": "system",
-            #     "content": "You're an expert in motivating people. It the user shares what's wrong, address it. Otherwise give general motivation",
-            # },
+            {
+                "role": "system",
+                "content": "You're an expert in motivating people. It the user shares what's wrong, address it. Otherwise give general motivation",
+            },
             {"role": "user", "content": user_input},
         ],
     )
